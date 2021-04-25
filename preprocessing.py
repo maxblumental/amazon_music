@@ -4,6 +4,9 @@ import pandas as pd
 
 
 def drop_vague_elements(df: pd.DataFrame, min_ratings: int) -> pd.DataFrame:
+    """
+    Iteratively look for items and users having too few ratings and drop them.
+    """
     initial = df
     df = df.copy()
     iteration = 0
@@ -31,6 +34,10 @@ def drop_vague_elements(df: pd.DataFrame, min_ratings: int) -> pd.DataFrame:
 
 
 def index_items(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Enumerate items of each user in historical order.
+    Store the indices in the "item_index" column of the output dataframe.
+    """
     df = df.sort_values(['reviewerID', 'unixReviewTime'])
     item_indices = []
     index = 0
@@ -46,6 +53,10 @@ def index_items(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def split_by_user(df: pd.DataFrame, train_ratings_num: int) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Put the first train_ratings_num items of each user to the train split
+    and put the rest to the test split.
+    """
     df = index_items(df)
     train = df[df.item_index < train_ratings_num].drop(columns=['item_index'])
     test = df[df.item_index >= train_ratings_num].drop(columns=['item_index'])
